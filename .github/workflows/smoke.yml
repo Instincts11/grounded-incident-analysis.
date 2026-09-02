@@ -2,8 +2,6 @@ name: smoke
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 7 * * 1-5"
 
 jobs:
   sample-pipeline:
