@@ -44,7 +44,9 @@ eval/benchmarks/generated/
 
 # IDE/editor settings
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tailwind.css-data.json
 
 # OS-generated files
 .DS_Store

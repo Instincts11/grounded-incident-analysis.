@@ -42,15 +42,17 @@ This is the opposite: typed events, eight independent detectors, graph correlati
 ## Pipeline
 
 ```mermaid
-flowchart LR
-  A["📥 Ingest<br/>CSV · JSON · JSONL"] --> B["⏱️ Normalize<br/>UTC 5-min buckets"]
-  B --> C["📡 Detect<br/>z-score + MAD"]
-  C --> D["🔗 Correlate<br/>time · service · graph"]
-  D --> E["🎯 RCA<br/>origin vs blast radius"]
-  E --> F["📚 Retrieve<br/>runbooks + history"]
-  F --> G["✅ Ground<br/>claim ↔ evidence"]
-  G --> H["✍️ Compose<br/>heuristic ± Groq"]
-  H --> I["🖥️ Console<br/>facts · trace · Q&A"]
+flowchart TB
+  A["📥 Ingest<br/>CSV · JSON · JSONL"]
+  B["⏱️ Normalize<br/>UTC 5-min buckets"]
+  C["📡 Detect<br/>z-score + MAD"]
+  D["🔗 Correlate<br/>time · service · graph"]
+  E["🎯 RCA<br/>origin vs blast radius"]
+  F["📚 Retrieve<br/>runbooks + history"]
+  G["✅ Ground<br/>claim ↔ evidence"]
+  H["✍️ Compose<br/>heuristic ± Groq"]
+  I["🖥️ Console<br/>facts · trace · Q&A"]
+  A --> B --> C --> D --> E --> F --> G --> H --> I
 ```
 
 **LLM sits at compose, not at detect.** If Groq is down, the heuristic report and the detector ledger still exist.
