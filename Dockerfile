@@ -16,6 +16,9 @@ COPY data ./data
 
 RUN poetry install --only main --no-ansi
 
+COPY start.sh ./start.sh
+RUN sed -i 's/\r$//' start.sh && chmod +x start.sh
+
 EXPOSE 8000
 
-CMD python -m uvicorn incident_agent.api.main:app --host 0.0.0.0 --port ${PORT:-8000}
+CMD ["./start.sh"]
