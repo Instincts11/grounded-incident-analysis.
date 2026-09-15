@@ -21,4 +21,6 @@ RUN sed -i 's/\r$//' start.sh && chmod +x start.sh
 
 EXPOSE 8000
 
-CMD ["python", "-m", "uvicorn", "incident_agent.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Railway Settings still injects `poetry run uvicorn --port $PORT`. ENTRYPOINT
+# ignores that and always starts the API on 8000.
+ENTRYPOINT ["./start.sh"]
