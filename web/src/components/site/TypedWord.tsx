@@ -43,7 +43,7 @@ export function TypedWord({
 
     let index = 0;
     let mode: "type" | "hold" | "clear" = "type";
-    let timer: ReturnType<typeof setTimeout> | undefined;
+    let timer: number | undefined;
 
     const schedule = (fn: () => void, ms: number) => {
       timer = window.setTimeout(fn, ms);
