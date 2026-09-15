@@ -66,12 +66,12 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
         <div className={cn("flex items-center", collapsed ? "justify-center px-2" : "px-5")}>
           <Link href="/" className={cn("flex items-baseline gap-2", collapsed && "justify-center")}>
             {collapsed ? (
-              <span className="serif text-2xl">i</span>
+              <span className="serif text-2xl">s</span>
             ) : (
               <>
-                <span className="serif text-2xl">incident</span>
+                <span className="serif text-2xl">sansa</span>
                 <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--mint)]">
-                  console
+                  agent
                 </span>
               </>
             )}

@@ -64,7 +64,7 @@ export function Nav() {
     >
       <div className="mx-auto flex max-w-[1440px] items-center justify-between px-8 py-6">
         <Link href="/" className="flex items-baseline gap-2">
-          <span className="serif text-2xl tracking-tight">incident</span>
+          <span className="serif text-2xl tracking-tight">sansa</span>
           <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--mint)]">
             agent
           </span>
