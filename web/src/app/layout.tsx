@@ -27,6 +27,10 @@ export const metadata: Metadata = {
   title: "Grounded Incident Analysis",
   description:
     "Detectors first, optional Groq rewrite, closed-book Q&A. Logs and metrics in; a ranked origin and a report you can defend out.",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
