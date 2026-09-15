@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from collections.abc import Awaitable, Callable
 from datetime import datetime
 from pathlib import Path
@@ -53,6 +54,22 @@ from incident_agent.utils.security import (
     validate_write_path,
 )
 
+
+def _cors_allow_origins() -> list[str]:
+    origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+    ]
+    extra = os.getenv("INCIDENT_AGENT_CORS_ORIGINS", "")
+    for origin in extra.split(","):
+        cleaned = origin.strip().rstrip("/")
+        if cleaned and cleaned not in origins:
+            origins.append(cleaned)
+    return origins
+
+
 app = FastAPI(
     title="Grounded Incident Analysis",
     version=__version__,
@@ -60,12 +77,7 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3001",
-    ],
+    allow_origins=_cors_allow_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

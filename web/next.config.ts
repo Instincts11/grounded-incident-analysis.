@@ -1,12 +1,14 @@
 import type { NextConfig } from "next";
 
+const backendOrigin = (process.env.BACKEND_URL ?? "http://127.0.0.1:8000").replace(/\/$/, "");
+
 const nextConfig: NextConfig = {
   transpilePackages: ["three"],
   async rewrites() {
     return [
       {
         source: "/backend/:path*",
-        destination: "http://127.0.0.1:8000/:path*",
+        destination: `${backendOrigin}/:path*`,
       },
     ];
   },
