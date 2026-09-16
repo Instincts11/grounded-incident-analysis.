@@ -1176,3 +1176,108 @@ body {
   }
 }
 
+.console-walkthrough__card {
+  padding: 2.5rem;
+}
+
+.console-review-card {
+  padding: 2.5rem;
+}
+
+@media (max-width: 530px) {
+  .console-walkthrough {
+    margin-left: -0.35rem;
+    margin-right: -0.35rem;
+    width: calc(100% + 0.7rem);
+    max-width: none;
+  }
+
+  .console-walkthrough__card,
+  .console-walkthrough #console-run-result {
+    padding: 0.85rem 0.85rem;
+    border-radius: 1.15rem;
+  }
+
+  .console-walkthrough .compose-split__col,
+  .console-walkthrough .ask-box {
+    padding: 0.8rem 0.7rem;
+  }
+
+  .console-walkthrough .ask-box__result {
+    padding: 0.75rem 0.7rem;
+  }
+
+  .console-walkthrough .ask-box__form {
+    flex-wrap: wrap;
+  }
+
+  .console-walkthrough .ask-box__form input {
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+  }
+
+  .console-walkthrough .spine {
+    padding-left: 1.05rem;
+    padding-right: 0.2rem;
+  }
+
+  .console-walkthrough .spine-item::before {
+    left: -0.88rem;
+  }
+
+  .console-walkthrough .report-prose,
+  .console-walkthrough .compose-split__talk,
+  .console-walkthrough .max-w-3xl {
+    max-width: none;
+  }
+}
+
+@media (max-width: 610px) {
+  .console-shell .data-table {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    font-size: 10px;
+    line-height: 1.4;
+    border-radius: 1.15rem;
+  }
+
+  .console-shell .data-table > * {
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+    column-gap: 0.4rem;
+  }
+
+  .console-shell .data-table * {
+    font-size: inherit;
+    line-height: inherit;
+  }
+}
+
+@media (max-width: 540px) {
+  .console-review-card {
+    margin-left: -0.35rem;
+    margin-right: -0.35rem;
+    width: calc(100% + 0.7rem);
+    max-width: none;
+    padding: 0.85rem;
+    border-radius: 1.15rem;
+  }
+
+  .console-review-card .max-w-3xl {
+    max-width: none;
+  }
+
+  .console-review-card .spine {
+    padding-left: 1.05rem;
+    padding-right: 0.15rem;
+  }
+
+  .console-review-card .spine-item::before {
+    left: -0.88rem;
+  }
+}
+

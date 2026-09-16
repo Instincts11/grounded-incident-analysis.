@@ -102,7 +102,7 @@ export default function ReportsPage() {
         ))}
       </section>
 
-      <section className="rounded-3xl border border-[var(--line)] p-10">
+      <section className="console-review-card rounded-3xl border border-[var(--line)]">
         <h2 className="text-2xl">Review states</h2>
         <p className="mt-4 max-w-3xl leading-7 text-[var(--muted)]">
           draft is the default after compose. reviewed means a human looked.

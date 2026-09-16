@@ -201,8 +201,9 @@ export default function ConsoleHome() {
         </div>
       </section>
 
+      <div className="console-walkthrough">
       {emptyCopy ? (
-        <section id="console-run-result" className="panel scroll-mt-8 rounded-[2rem] p-10">
+        <section id="console-run-result" className="panel console-walkthrough__card scroll-mt-8 rounded-[2rem]">
           <p className="kicker">{emptyCopy.kicker}</p>
           <h2 className="mt-4 text-3xl tracking-tight">{emptyCopy.title}</h2>
           <p className="mt-3 font-mono text-sm text-[var(--mint)]">
@@ -217,7 +218,7 @@ export default function ConsoleHome() {
           ) : null}
         </section>
       ) : latestReport && latest ? (
-        <section id="console-run-result" className="panel scroll-mt-8 rounded-[2rem] p-10">
+        <section id="console-run-result" className="panel console-walkthrough__card scroll-mt-8 rounded-[2rem]">
           <p className="kicker">Latest report</p>
           <h2 className="mt-4 text-3xl tracking-tight">{latestReport.incident_id}</h2>
           {latest.incidents[0] ? (
@@ -249,7 +250,7 @@ export default function ConsoleHome() {
           </div>
         </section>
       ) : latest ? (
-        <section id="console-run-result" className="panel scroll-mt-8 rounded-[2rem] p-10">
+        <section id="console-run-result" className="panel console-walkthrough__card scroll-mt-8 rounded-[2rem]">
           <p className="kicker">Pipeline completed</p>
           <h2 className="mt-4 text-3xl tracking-tight">Run finished with no report</h2>
           <p className="mt-6 max-w-3xl leading-8 text-[var(--muted)]">
@@ -265,7 +266,7 @@ export default function ConsoleHome() {
       )}
 
       <section className="grid grid-cols-1 gap-8 min-[960px]:grid-cols-2">
-        <article className="rounded-3xl border border-[var(--line)] p-10">
+        <article className="console-walkthrough__card rounded-3xl border border-[var(--line)]">
           <h2 className="text-2xl">How a shift starts</h2>
           <ol className="mt-6 space-y-4 text-[var(--muted)] leading-7">
             <li>1. Confirm API health is ok — the pill above is live.</li>
@@ -275,7 +276,7 @@ export default function ConsoleHome() {
             <li>5. Ask CPU vs baseline, then ask about the weather — the second must refuse.</li>
           </ol>
         </article>
-        <article className="rounded-3xl border border-[var(--line)] p-10">
+        <article className="console-walkthrough__card rounded-3xl border border-[var(--line)]">
           <h2 className="text-2xl">What the numbers mean</h2>
           <p className="mt-6 leading-7 text-[var(--muted)]">
             Jobs are in-memory analysis runs for this API process. Incidents are
@@ -288,6 +289,7 @@ export default function ConsoleHome() {
       </section>
 
       <InterviewScript />
+      </div>
 
       <section>
         <h2 className="text-3xl tracking-tight">After the first run</h2>
