@@ -130,11 +130,26 @@ export function uniqueBy<T>(rows: T[], key: (row: T) => string): T[] {
   return out;
 }
 
+const WORKSPACE_KEY = "sansa-workspace-id";
+
+export function workspaceId(): string {
+  if (typeof window === "undefined") {
+    return "default";
+  }
+  let id = window.localStorage.getItem(WORKSPACE_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    window.localStorage.setItem(WORKSPACE_KEY, id);
+  }
+  return id;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${BASE}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      "X-Workspace-Id": workspaceId(),
       ...(init?.headers ?? {}),
     },
     cache: "no-store",
@@ -164,7 +179,7 @@ export const api = {
       body: JSON.stringify({
         logs_path: body.logs_path,
         metrics_path: body.metrics_path,
-        artifact_root: body.artifact_root ?? "artifacts/pipeline",
+        artifact_root: body.artifact_root ?? `artifacts/ui/${workspaceId()}/pipeline`,
         bucket_size_minutes: 5,
         retrieval_enabled: true,
         knowledge_source_paths: ["data/knowledge/runbooks", "data/knowledge/incidents"],

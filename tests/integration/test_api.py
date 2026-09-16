@@ -344,6 +344,24 @@ def test_job_related_endpoints_return_404_for_unknown_job() -> None:
     assert anomalies.status_code == 404
 
 
+def test_jobs_are_isolated_by_workspace_header() -> None:
+    client = _client()
+    store = client.app.state.job_store
+    assert isinstance(store, AnalysisJobStore)
+    alice = store.create_submitted_job(workspace_id="alice")
+    bob = store.create_submitted_job(workspace_id="bob")
+
+    alice_jobs = client.get("/analysis-jobs", headers={"X-Workspace-Id": "alice"})
+    bob_jobs = client.get("/analysis-jobs", headers={"X-Workspace-Id": "bob"})
+
+    assert alice_jobs.status_code == 200
+    assert [job["job_id"] for job in alice_jobs.json()["jobs"]] == [alice.job_id]
+    assert bob_jobs.status_code == 200
+    assert [job["job_id"] for job in bob_jobs.json()["jobs"]] == [bob.job_id]
+    hidden = client.get(f"/analysis-jobs/{alice.job_id}", headers={"X-Workspace-Id": "bob"})
+    assert hidden.status_code == 404
+
+
 def test_workspace_samples_and_empty_job_list() -> None:
     client = _client()
     samples = client.get("/workspace/samples")

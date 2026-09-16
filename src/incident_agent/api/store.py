@@ -27,6 +27,7 @@ class AnalysisJobRecord(BaseModel):
     run_id: str | None = None
     artifact_dir: str | None = None
     error: str | None = None
+    workspace_id: str = "default"
     reports: list[FinalIncidentReport] = Field(default_factory=list)
     incidents: list[CorrelatedIncidentCandidate] = Field(default_factory=list)
     anomalies: list[AnomalyCandidate] = Field(default_factory=list)
@@ -39,12 +40,13 @@ class AnalysisJobStore:
     def __init__(self) -> None:
         self._jobs: dict[str, AnalysisJobRecord] = {}
 
-    def create_submitted_job(self) -> AnalysisJobRecord:
-        """Create a submitted job record."""
+    def create_submitted_job(self, workspace_id: str = "default") -> AnalysisJobRecord:
+        """Create a submitted job record scoped to one browser workspace."""
 
         now = datetime.now(UTC)
         record = AnalysisJobRecord(
             job_id=f"job-{uuid4().hex[:12]}",
+            workspace_id=workspace_id,
             status="submitted",
             created_at=now,
             updated_at=now,
@@ -87,10 +89,15 @@ class AnalysisJobStore:
         self._jobs[job_id] = existing
         return existing
 
-    def get(self, job_id: str) -> AnalysisJobRecord | None:
-        """Return job record by id if present."""
+    def get(self, job_id: str, workspace_id: str | None = None) -> AnalysisJobRecord | None:
+        """Return job record by id if present and visible to this workspace."""
 
-        return self._jobs.get(job_id)
+        record = self._jobs.get(job_id)
+        if record is None:
+            return None
+        if workspace_id is not None and record.workspace_id != workspace_id:
+            return None
+        return record
 
     def transition_report_review(
         self,
@@ -117,7 +124,10 @@ class AnalysisJobStore:
                 return updated
         raise KeyError(f"Report not found for incident_id={incident_id}")
 
-    def list(self) -> list[AnalysisJobRecord]:
-        """List all jobs sorted by create time."""
+    def list(self, workspace_id: str | None = None) -> list[AnalysisJobRecord]:
+        """List jobs sorted by create time, optionally for one workspace."""
 
-        return sorted(self._jobs.values(), key=lambda item: item.created_at)
+        jobs = list(self._jobs.values())
+        if workspace_id is not None:
+            jobs = [item for item in jobs if item.workspace_id == workspace_id]
+        return sorted(jobs, key=lambda item: item.created_at)

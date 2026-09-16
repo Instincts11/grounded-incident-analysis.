@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { api, type JobDetail, type SampleDataset } from "@/lib/api";
+import { api, workspaceId, type JobDetail, type SampleDataset } from "@/lib/api";
 import { clipReportText } from "@/lib/reportProse";
 
 const STAGES = ["Ingest", "Detect", "Correlate", "Compose"];
@@ -76,7 +76,7 @@ export function ConsoleDemo() {
     await api.runJob({
       logs_path: sample.logs_path,
       metrics_path: sample.metrics_path,
-      artifact_root: `artifacts/ui/${sample.id}`,
+      artifact_root: `artifacts/ui/${workspaceId()}/${sample.id}`,
     });
     await refresh();
   }, [refresh]);

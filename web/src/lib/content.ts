@@ -121,7 +121,7 @@ export const faqs = [
   },
   {
     q: "Does the console persist jobs?",
-    a: "The job store is in-memory for the API process. Artifacts persist on disk. Re-run a scenario after a restart to refill the board.",
+    a: "The job store is in-memory and scoped to this browser. Artifacts persist on disk. Re-run a scenario after a restart to refill the board.",
   },
   {
     q: "Why not just paste logs into ChatGPT?",
@@ -674,7 +674,7 @@ export const limitations = [
   },
   {
     label: "Jobs are memory",
-    body: "Restarting uvicorn clears the board. Artifacts remain. Re-run a scenario to refill incidents and reports.",
+    body: "Restarting uvicorn clears the board. Jobs are scoped to this browser, not a shared account. Artifacts remain. Re-run a scenario to refill incidents and reports.",
   },
   {
     label: "Heuristic compose",
@@ -703,7 +703,7 @@ export const retrievalParams = [
 export const operatorNotes = [
   {
     title: "Artifacts outlive the board",
-    body: "Restarting uvicorn clears jobs. JSON under artifacts/ui/ remains. Re-run a scenario to refill the console.",
+    body: "Restarting uvicorn clears jobs. Each browser has its own board. JSON under artifacts/ui/ remains. Re-run a scenario to refill the console.",
   },
   {
     title: "Retrieval is on for console runs",

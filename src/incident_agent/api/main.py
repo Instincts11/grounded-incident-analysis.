@@ -12,7 +12,7 @@ from time import perf_counter
 from typing import Annotated, Any
 from uuid import uuid4
 
-from fastapi import Depends, FastAPI, HTTPException, Query, Request
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
@@ -290,6 +290,27 @@ def get_job_store(request: Request) -> AnalysisJobStore:
     return store
 
 
+def get_workspace_id(
+    x_workspace_id: Annotated[str | None, Header()] = None,
+) -> str:
+    """Browser-scoped workspace id. Missing header shares the local default bucket."""
+
+    raw = (x_workspace_id or "default").strip()
+    cleaned = "".join(char for char in raw if char.isalnum() or char in "-_")
+    return cleaned[:64] or "default"
+
+
+def _require_job(
+    job_store: AnalysisJobStore,
+    job_id: str,
+    workspace_id: str,
+) -> AnalysisJobRecord:
+    job = job_store.get(job_id, workspace_id=workspace_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
+    return job
+
+
 @app.middleware("http")
 async def request_context_middleware(
     request: Request,
@@ -453,10 +474,11 @@ def analyze_pipeline(request: PipelineAnalyzeRequest) -> PipelineRunResult:
 def submit_analysis_job(
     request: AnalysisJobSubmitRequest,
     job_store: Annotated[AnalysisJobStore, Depends(get_job_store)],
+    workspace_id: Annotated[str, Depends(get_workspace_id)],
 ) -> AnalysisJobStatusResponse:
     """Submit and execute a local file-based analysis job."""
 
-    job = job_store.create_submitted_job()
+    job = job_store.create_submitted_job(workspace_id=workspace_id)
     try:
         security_config = load_security_config_safe(request.config_path)
         validate_read_path(
@@ -519,11 +541,12 @@ def submit_analysis_job(
 )
 def list_analysis_jobs(
     job_store: Annotated[AnalysisJobStore, Depends(get_job_store)],
+    workspace_id: Annotated[str, Depends(get_workspace_id)],
 ) -> AnalysisJobListResponse:
-    """List all in-memory analysis jobs for the product UI."""
+    """List in-memory analysis jobs for this browser workspace."""
 
     return AnalysisJobListResponse(
-        jobs=[_status_response(job) for job in reversed(job_store.list())]
+        jobs=[_status_response(job) for job in reversed(job_store.list(workspace_id))]
     )
 
 
@@ -536,12 +559,11 @@ def list_analysis_jobs(
 def get_analysis_job(
     job_id: str,
     job_store: Annotated[AnalysisJobStore, Depends(get_job_store)],
+    workspace_id: Annotated[str, Depends(get_workspace_id)],
 ) -> AnalysisJobDetailResponse:
     """Return job status plus incidents, anomalies, and reports."""
 
-    job = job_store.get(job_id)
-    if job is None:
-        raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
+    job = _require_job(job_store, job_id, workspace_id)
     status = _status_response(job)
     return AnalysisJobDetailResponse(
         **status.model_dump(),
@@ -562,12 +584,11 @@ def ask_analysis_job(
     job_id: str,
     request: AnalysisAskRequest,
     job_store: Annotated[AnalysisJobStore, Depends(get_job_store)],
+    workspace_id: Annotated[str, Depends(get_workspace_id)],
 ) -> AnalysisAskResponse:
     """Answer only from this job's detector facts, RCA hypothesis, and retrieved snippets."""
 
-    job = job_store.get(job_id)
-    if job is None:
-        raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
+    job = _require_job(job_store, job_id, workspace_id)
     if job.status != "completed":
         raise HTTPException(status_code=400, detail=f"Job {job_id} is not completed.")
     result: AskResult = ask_incident_question(
@@ -640,13 +661,12 @@ def list_sample_datasets() -> SampleCatalogResponse:
 def get_job_reports(
     job_id: str,
     job_store: Annotated[AnalysisJobStore, Depends(get_job_store)],
+    workspace_id: Annotated[str, Depends(get_workspace_id)],
     review_status: Annotated[ReviewStatus | None, Query()] = None,
 ) -> AnalysisJobReportsResponse:
     """Retrieve generated final reports for a job."""
 
-    job = job_store.get(job_id)
-    if job is None:
-        raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
+    job = _require_job(job_store, job_id, workspace_id)
     reports = job.reports
     if review_status is not None:
         reports = [report for report in reports if report.review_status == review_status]
@@ -664,12 +684,11 @@ def transition_job_report_review(
     incident_id: str,
     request: ReportReviewTransitionRequest,
     job_store: Annotated[AnalysisJobStore, Depends(get_job_store)],
+    workspace_id: Annotated[str, Depends(get_workspace_id)],
 ) -> ReportReviewTransitionResponse:
     """Transition report lifecycle status and persist review metadata."""
 
-    job = job_store.get(job_id)
-    if job is None:
-        raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
+    _require_job(job_store, job_id, workspace_id)
     try:
         report = job_store.transition_report_review(
             job_id=job_id,
@@ -699,12 +718,11 @@ def export_job_report_webhook(
     incident_id: str,
     request: ReportWebhookExportRequest,
     job_store: Annotated[AnalysisJobStore, Depends(get_job_store)],
+    workspace_id: Annotated[str, Depends(get_workspace_id)],
 ) -> ReportWebhookExportResponse:
     """Export one approved report and persist webhook delivery audit."""
 
-    job = job_store.get(job_id)
-    if job is None:
-        raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
+    job = _require_job(job_store, job_id, workspace_id)
     report = next((item for item in job.reports if item.incident_id == incident_id), None)
     if report is None:
         raise HTTPException(
@@ -761,18 +779,17 @@ def export_job_report_webhook(
 )
 def list_incidents(
     job_store: Annotated[AnalysisJobStore, Depends(get_job_store)],
+    workspace_id: Annotated[str, Depends(get_workspace_id)],
     job_id: Annotated[str | None, Query(description="Optional job id filter.")] = None,
 ) -> IncidentListResponse:
-    """List incidents for one job or all jobs."""
+    """List incidents for one job or this workspace."""
 
     if job_id:
-        job = job_store.get(job_id)
-        if job is None:
-            raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
+        job = _require_job(job_store, job_id, workspace_id)
         return IncidentListResponse(incidents=job.incidents)
 
     by_id: dict[str, CorrelatedIncidentCandidate] = {}
-    for job in job_store.list():
+    for job in job_store.list(workspace_id):
         for incident in job.incidents:
             by_id[incident.incident_id] = incident
     return IncidentListResponse(incidents=list(by_id.values()))
@@ -786,18 +803,17 @@ def list_incidents(
 )
 def list_anomalies(
     job_store: Annotated[AnalysisJobStore, Depends(get_job_store)],
+    workspace_id: Annotated[str, Depends(get_workspace_id)],
     job_id: Annotated[str | None, Query(description="Optional job id filter.")] = None,
 ) -> AnomalyListResponse:
-    """List anomalies for one job or all jobs."""
+    """List anomalies for one job or this workspace."""
 
     if job_id:
-        job = job_store.get(job_id)
-        if job is None:
-            raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
+        job = _require_job(job_store, job_id, workspace_id)
         return AnomalyListResponse(anomalies=job.anomalies)
 
     by_key: dict[tuple[str, str, datetime, datetime], AnomalyCandidate] = {}
-    for job in job_store.list():
+    for job in job_store.list(workspace_id):
         for anomaly in job.anomalies:
             by_key[
                 (

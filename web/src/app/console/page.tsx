@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { api, type JobDetail, type JobStatus, type SampleDataset } from "@/lib/api";
+import { api, workspaceId, type JobDetail, type JobStatus, type SampleDataset } from "@/lib/api";
 import { cn } from "@/lib/cn";
 import { operatorNotes, shiftSteps } from "@/lib/content";
 import { ComposeSplit } from "@/components/console/ComposeSplit";
@@ -76,7 +76,7 @@ export default function ConsoleHome() {
       const created = await api.runJob({
         logs_path: sample.logs_path,
         metrics_path: sample.metrics_path,
-        artifact_root: `artifacts/ui/${sample.id}`,
+        artifact_root: `artifacts/ui/${workspaceId()}/${sample.id}`,
       });
       await refresh(created.job_id);
       document.getElementById("console-run-result")?.scrollIntoView({
