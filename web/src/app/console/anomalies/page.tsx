@@ -40,8 +40,8 @@ export default function AnomaliesPage() {
         </p>
       </header>
       {error ? <p className="text-[var(--danger)]">{error}</p> : null}
-      <div className="data-table overflow-hidden rounded-3xl border border-[var(--line)]">
-        <div className="grid grid-cols-6 border-b border-[var(--line)] px-6 py-4 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--faint)]">
+      <div className="anomaly-ledger data-table overflow-hidden rounded-3xl border border-[var(--line)]">
+        <div className="anomaly-ledger__head grid grid-cols-6 border-b border-[var(--line)] px-6 py-4 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--faint)]">
           <span>Type</span>
           <span>Service</span>
           <span>Severity</span>
@@ -50,22 +50,32 @@ export default function AnomaliesPage() {
           <span>Window</span>
         </div>
         {anomalies.length === 0 ? (
-          <p className="px-6 py-10 text-[var(--muted)]">No anomalies in memory yet.</p>
+          <p className="anomaly-ledger__empty px-6 py-10 text-[var(--muted)]">No anomalies in memory yet.</p>
         ) : null}
         {anomalies.map((item, index) => (
-          <div
+          <article
             key={`${item.anomaly_type}-${item.timestamp_window_start}-${index}`}
-            className="grid grid-cols-6 border-b border-[var(--line)] px-6 py-5 text-sm last:border-0"
+            className="anomaly-ledger__row grid grid-cols-6 border-b border-[var(--line)] px-6 py-5 text-sm last:border-0"
           >
-            <span className="text-[var(--mint)]">{item.anomaly_type.replaceAll("_", " ")}</span>
-            <span>{item.affected_service}</span>
-            <span className="font-mono">{item.severity_score.toFixed(2)}</span>
-            <span className="font-mono">{item.observed_value}</span>
-            <span className="font-mono">{item.baseline_value}</span>
-            <span className="font-mono text-xs text-[var(--faint)]">
+            <span data-label="Type" className="anomaly-ledger__type text-[var(--mint)]">
+              {item.anomaly_type.replaceAll("_", " ")}
+            </span>
+            <span data-label="Service" className="anomaly-ledger__service">
+              {item.affected_service}
+            </span>
+            <span data-label="Severity" className="anomaly-ledger__metric font-mono">
+              {item.severity_score.toFixed(2)}
+            </span>
+            <span data-label="Observed" className="anomaly-ledger__metric font-mono">
+              {item.observed_value}
+            </span>
+            <span data-label="Baseline" className="anomaly-ledger__metric font-mono">
+              {item.baseline_value}
+            </span>
+            <span data-label="Window" className="anomaly-ledger__metric font-mono text-xs text-[var(--faint)]">
               {new Date(item.timestamp_window_start).toLocaleTimeString()}
             </span>
-          </div>
+          </article>
         ))}
       </div>
 

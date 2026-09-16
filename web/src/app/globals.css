@@ -1332,3 +1332,61 @@ body {
   }
 }
 
+@media (max-width: 450px) {
+  .console-shell .anomaly-ledger {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    border-radius: 1.15rem;
+  }
+
+  .anomaly-ledger__head {
+    display: none;
+  }
+
+  .anomaly-ledger__empty {
+    padding: 1.1rem 0.95rem;
+  }
+
+  .anomaly-ledger__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem 0.85rem;
+    padding: 0.95rem 0.9rem;
+  }
+
+  .anomaly-ledger__row > * {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+
+  .anomaly-ledger__row > *::before {
+    content: attr(data-label);
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .anomaly-ledger__type,
+  .anomaly-ledger__service {
+    grid-column: 1 / -1;
+  }
+
+  .anomaly-ledger__type {
+    font-size: 0.9375rem;
+    color: var(--mint);
+  }
+}
+
