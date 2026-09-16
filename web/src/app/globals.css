@@ -1255,6 +1255,29 @@ body {
     font-size: inherit;
     line-height: inherit;
   }
+
+  .console-stage-list {
+    margin-left: -0.35rem;
+    margin-right: -0.35rem;
+    width: calc(100% + 0.7rem);
+    max-width: none;
+  }
+
+  .console-stage-card {
+    gap: 0.45rem;
+    padding: 0.85rem 0.75rem 0.85rem 0.5rem;
+    border-radius: 1.15rem;
+  }
+
+  .console-stage-card__n {
+    min-width: 1.35rem;
+    flex-shrink: 0;
+  }
+
+  .console-stage-card__body,
+  .console-stage-card .max-w-3xl {
+    max-width: none;
+  }
 }
 
 @media (max-width: 540px) {

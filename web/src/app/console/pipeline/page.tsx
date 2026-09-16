@@ -33,11 +33,11 @@ export default function PipelinePage() {
         </article>
       </section>
 
-      <ol className="space-y-4">
+      <ol className="console-stage-list space-y-4">
         {stages.map((stage) => (
-          <li key={stage.n} className="panel flex gap-8 rounded-3xl p-8">
-            <span className="font-mono text-[var(--violet)]">{stage.n}</span>
-            <div>
+          <li key={stage.n} className="panel console-stage-card flex gap-8 rounded-3xl p-8">
+            <span className="console-stage-card__n font-mono text-[var(--violet)]">{stage.n}</span>
+            <div className="console-stage-card__body min-w-0">
               <h2 className="text-2xl">{stage.title}</h2>
               <p className="mt-3 max-w-3xl leading-7 text-[var(--muted)]">{stage.body}</p>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--faint)]">{stage.detail}</p>
