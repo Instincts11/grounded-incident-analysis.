@@ -1304,3 +1304,31 @@ body {
   }
 }
 
+@media (max-width: 525px) {
+  .console-gates-table__head,
+  .console-gates-table__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.05fr);
+    column-gap: 0.7rem;
+    padding-left: 0.7rem;
+    padding-right: 0.55rem;
+  }
+
+  .console-gates-table__family {
+    padding-left: 0.45rem;
+  }
+
+  .console-gates-table__family,
+  .console-gates-table__signal,
+  .console-gates-table__gate {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .console-gates-table__gate {
+    font-size: 10px;
+    line-height: 1.35;
+  }
+}
+

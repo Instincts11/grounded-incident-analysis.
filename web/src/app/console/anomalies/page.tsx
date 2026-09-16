@@ -109,8 +109,8 @@ export default function AnomaliesPage() {
           Thresholds live in configs/default.yaml under anomaly_detection. A
           quiet CPU series does not suppress an error-rate spike.
         </p>
-        <div className="data-table mt-8 overflow-hidden rounded-3xl border border-[var(--line)]">
-          <div className="grid grid-cols-3 border-b border-[var(--line)] px-6 py-4 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--faint)]">
+        <div className="console-gates-table data-table mt-8 overflow-hidden rounded-3xl border border-[var(--line)]">
+          <div className="console-gates-table__head grid grid-cols-3 border-b border-[var(--line)] px-6 py-4 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--faint)]">
             <span>Family</span>
             <span>Signal</span>
             <span>Gate</span>
@@ -118,11 +118,11 @@ export default function AnomaliesPage() {
           {detectors.map((row) => (
             <div
               key={row.name}
-              className="grid grid-cols-3 border-b border-[var(--line)] px-6 py-5 text-sm last:border-0"
+              className="console-gates-table__row grid grid-cols-3 border-b border-[var(--line)] px-6 py-5 text-sm last:border-0"
             >
-              <span className="font-mono text-[var(--mint)]">{row.name}</span>
-              <span className="text-[var(--muted)]">{row.signal}</span>
-              <span className="font-mono text-xs text-[var(--blue)]">{row.gate}</span>
+              <span className="console-gates-table__family font-mono text-[var(--mint)]">{row.name}</span>
+              <span className="console-gates-table__signal text-[var(--muted)]">{row.signal}</span>
+              <span className="console-gates-table__gate font-mono text-xs text-[var(--blue)]">{row.gate}</span>
             </div>
           ))}
         </div>
